@@ -1,26 +1,27 @@
 import tkinter as tk
-from tkinter import filedialog
-from PIL import Image, ImageTk
-
-window = tk.Tk()
-window.title("The Image Editor")
-window.minsize(width=1000, height=600)  # window size at start
-window.config(padx=10, pady=10)  # padding
+from tkinter import ttk
+from editPane import EditPane
+from imageViewer import ImageViewer
 
 
-def upload_image():
-    global img
-    file_types = [('jpeg Files', '*.jpeg'),  # these are the file types
-                  ('jpg Files', '*.jpg'),
-                  ('png Files', '*.png')]
-    file_name = filedialog.askopenfilename(title='Select an image',
-                                           filetypes=file_types)  # this returns the full file path
-    img = ImageTk.PhotoImage(file=file_name)
-    button_2 = tk.Button(window, image=img)
-    button_2.grid(row=1, column=1)
+# The Main class is inherited from tk.Tk class
+class Main(tk.Tk):
 
+    def __init__(self):
+        tk.Tk.__init__(self)  # this line is to keep the inheritance of the parent's __init__() function.
 
-button_1 = tk.Button(window, text="New", width=10, command=upload_image)
-button_1.grid(row=0, column=0)
+        self.filename = ""
+        self.original_image = None
+        self.processed_image = None
 
-window.mainloop()  # loop to keep the window open
+        self.is_image_selected = False
+
+        self.title("Image Editor")
+
+        self.editPane = EditPane(master=self)  # here we pass the Tk object(master) to EditPane.
+        separating_line = ttk.Separator(master=self, orient=tk.HORIZONTAL)
+        self.image_viewer = ImageViewer(master=self)
+
+        self.editPane.pack(pady=10)
+        separating_line.pack(fill=tk.X, padx=20, pady=5)
+        self.image_viewer.pack(fill=tk.BOTH, padx=20, pady=10, expand=1)
